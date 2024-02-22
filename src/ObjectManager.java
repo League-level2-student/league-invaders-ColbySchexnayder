@@ -1,8 +1,10 @@
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ObjectManager {
+public class ObjectManager implements ActionListener{
 	Rocketship rocket;
 	
 	ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
@@ -10,12 +12,14 @@ public class ObjectManager {
 	
 	Random random = new Random();
 	
+	int score = 0;
+	
 	public ObjectManager(Rocketship rocket) {
 		this.rocket = rocket;
 	}
 	
-	public void addProjectile() {
-		projectiles.add(new Projectile(rocket.x, rocket.y, 10, 10));
+	public void addProjectile(Projectile p) {
+		projectiles.add(p);
 	}
 	
 	public void addAlien() {
@@ -30,6 +34,9 @@ public class ObjectManager {
 		for (Projectile p : projectiles) {
 			p.update();
 		}
+		
+		checkCollision();
+		purgeObjects();
 	}
 	
 	public void draw(Graphics g) {
@@ -56,5 +63,28 @@ public class ObjectManager {
 				i--;
 			}
 		}
+	}
+	
+	public void checkCollision() {
+		for (Alien alien : aliens) {
+			if (rocket.collisionBox.intersects(alien.collisionBox)) {
+				rocket.isActive = false;
+				alien.isActive = false;
+			}
+			
+			for (Projectile projectile : projectiles) {
+				if (alien.collisionBox.intersects(projectile.collisionBox)) {
+					alien.isActive = false;
+					projectile.isActive = false;
+					score+=100;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		addAlien();
+		
 	}
 }

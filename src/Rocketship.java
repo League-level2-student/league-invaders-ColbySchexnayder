@@ -11,14 +11,23 @@ public class Rocketship extends GameObject{
 	public Rocketship(int x, int y, int width, int height) {
 		super(x, y, width, height);
 		speed = 10;
+		if (needImage) {
+			loadImage("rocket.png");
+		}
 	}
 	
 	public void draw(Graphics g) {
-		g.setColor(Color.blue);
-		g.fillRect(x, y, width, height);
+		if (gotImage) {
+			g.drawImage(image, x, y, width, height, null);
+		}
+		else {
+			g.setColor(Color.blue);
+			g.fillRect(x, y, width, height);
+		}
 	}
 	
 	public void update() {
+		super.update();
 		if (up && y-speed >= 0) {
 			y -= speed;
 		}
@@ -31,5 +40,9 @@ public class Rocketship extends GameObject{
 		if (right && x + speed <= LeagueInvaders.WIDTH - width) {
 			x += speed;
 		}
+	}
+	
+	public Projectile getProjectile() {
+		return new Projectile(x+width/2, y, 10, 10);
 	}
 }
